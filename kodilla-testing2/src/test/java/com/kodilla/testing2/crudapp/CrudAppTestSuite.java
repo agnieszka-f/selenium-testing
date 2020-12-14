@@ -46,18 +46,21 @@ public class CrudAppTestSuite {
     private void deleteCrudAppTestTask(String task) throws InterruptedException{
         driver.navigate().refresh();
         while(!driver.findElement(By.xpath("//select[1]")).isDisplayed());
-        driver.findElements(By.xpath("//form[@class=\"datatable__row\"]")).stream()
-                .filter(anyForm ->
-                        anyForm.findElement(By.xpath(".//p[@class=\"datatable__field-value\"]"))
-                                .getText().equals(task))
-                .forEach(theForm ->{
 
-                            WebElement buttonDelete =
-                                    theForm.findElement(By.xpath(".//fieldset[@class=\"datatable__row-section datatable__row-section--button-section\"]/button[4]"));
-                            buttonDelete.click();
-                        }
-                );
+        driver.findElements(By.xpath("//form[@class=\"datatable__row\"]")).stream()
+                .filter(anyForm -> filterTasks(anyForm,task))
+                .forEach(theForm -> getButtonDelete(theForm).click());
+
+
         Thread.sleep(5000);
+    }
+    private boolean filterTasks(WebElement webElement, String task){
+        return webElement.findElement(By.xpath(".//p[@class=\"datatable__field-value\"]")).getText().equals(task);
+    }
+    private WebElement getButtonDelete(WebElement theForm){
+        final String DELETE_TASK = ".//fieldset[@class=\"datatable__row-section datatable__row-section--button-section\"]/button[4]";
+
+        return theForm.findElement(By.xpath(DELETE_TASK));
     }
     @Test
     public void shouldCreateTrelloCart() throws InterruptedException {
